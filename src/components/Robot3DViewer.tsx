@@ -64,7 +64,7 @@ const RobotArm = () => {
         </mesh>
 
         {/* Joint 2 - Shoulder */}
-        <group rotation={[toRad(joints[1]?.angle || 0), 0, 0]} position={[0, 0.35, 0]}>
+        <group rotation={[0, 0, toRad(joints[1]?.angle || 0)]} position={[0, 0.35, 0]}>
           {/* Shoulder joint mount */}
           <mesh position={[0, 0, 0]} castShadow receiveShadow rotation={[Math.PI / 2, 0, 0]}>
             <cylinderGeometry args={[0.18, 0.18, 0.25, 32]} />
@@ -88,7 +88,7 @@ const RobotArm = () => {
           </mesh>
 
           {/* Joint 3 - Elbow */}
-          <group rotation={[toRad(joints[2]?.angle || 0), 0, 0]} position={[0, 0.95, 0]}>
+          <group rotation={[0, 0, toRad(joints[2]?.angle || 0)]} position={[0, 0.95, 0]}>
             {/* Elbow joint housing */}
             <mesh position={[0, 0, 0]} castShadow receiveShadow rotation={[Math.PI / 2, 0, 0]}>
               <cylinderGeometry args={[0.15, 0.15, 0.22, 32]} />
@@ -108,7 +108,7 @@ const RobotArm = () => {
             </mesh>
 
             {/* Joint 4 - Wrist 1 */}
-            <group rotation={[0, 0, toRad(joints[3]?.angle || 0)]} position={[0, 0.68, 0]}>
+            <group rotation={[0, toRad(joints[3]?.angle || 0), 0]} position={[0, 0.68, 0]}>
               {/* Wrist joint 1 */}
               <mesh position={[0, 0.08, 0]} castShadow receiveShadow>
                 <cylinderGeometry args={[0.1, 0.12, 0.16, 24]} />
@@ -116,7 +116,7 @@ const RobotArm = () => {
               </mesh>
 
               {/* Joint 5 - Wrist 2 */}
-              <group rotation={[toRad(joints[4]?.angle || 0), 0, 0]} position={[0, 0.16, 0]}>
+              <group rotation={[0, 0, toRad(joints[4]?.angle || 0)]} position={[0, 0.16, 0]}>
                 {/* Wrist joint 2 housing */}
                 <mesh position={[0, 0, 0]} castShadow receiveShadow rotation={[Math.PI / 2, 0, 0]}>
                   <cylinderGeometry args={[0.09, 0.09, 0.14, 24]} />
