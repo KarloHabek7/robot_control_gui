@@ -14,7 +14,39 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      robots: {
+        Row: {
+          created_at: string
+          gripper_open: boolean
+          id: string
+          last_updated: string
+          name: string
+          x_coordinate: number
+          y_coordinate: number
+          z_coordinate: number
+        }
+        Insert: {
+          created_at?: string
+          gripper_open?: boolean
+          id?: string
+          last_updated?: string
+          name: string
+          x_coordinate?: number
+          y_coordinate?: number
+          z_coordinate?: number
+        }
+        Update: {
+          created_at?: string
+          gripper_open?: boolean
+          id?: string
+          last_updated?: string
+          name?: string
+          x_coordinate?: number
+          y_coordinate?: number
+          z_coordinate?: number
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
