@@ -93,38 +93,30 @@ export default function RobotControl() {
           </div>
         </div>
 
-        {/* Bottom Section - All Controls */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          {/* Connection Status */}
-          <div>
+        {/* Bottom Section - 3 Column Layout */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Column 1: Robot Configuration + Connection Status */}
+          <div className="space-y-4">
+            <RobotConfiguration />
             <ConnectionStatus
               connected={false}
               onToggleConnection={() => {}}
             />
           </div>
 
-          {/* Position Display */}
-          <div>
+          {/* Column 2: Position Display + Control Panel */}
+          <div className="space-y-4">
             <PositionDisplay position={position} />
+            <ControlPanel
+              onMove={(direction, value) => console.log('Move:', direction, value)}
+              onGoToPosition={(x, y, z) => console.log('Go to:', x, y, z)}
+            />
           </div>
 
-          {/* Robot Configuration */}
-          <div>
-            <RobotConfiguration />
-          </div>
-
-          {/* Command Panel */}
+          {/* Column 3: Command Interface */}
           <div>
             <CommandPanel />
           </div>
-        </div>
-
-        {/* Compact Control Panel */}
-        <div className="mt-4">
-          <ControlPanel
-            onMove={(direction, value) => console.log('Move:', direction, value)}
-            onGoToPosition={(x, y, z) => console.log('Go to:', x, y, z)}
-          />
         </div>
       </div>
     </div>
