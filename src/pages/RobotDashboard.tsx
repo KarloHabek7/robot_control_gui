@@ -87,7 +87,7 @@ export default function RobotDashboard() {
                   <tr
                     key={robot.id}
                     onClick={() => handleRobotClick(robot.id)}
-                    className={`border-b cursor-pointer transition-all hover:scale-[1.01] ${
+                    className={`border-b cursor-pointer transition-colors ${
                       robot.gripper_open
                         ? "bg-green-500/10 hover:bg-green-500/20"
                         : "bg-red-500/10 hover:bg-red-500/20"
