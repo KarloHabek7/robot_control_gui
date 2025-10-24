@@ -172,7 +172,7 @@ const Robot3DViewer = () => {
   return (
     <div className="card-premium rounded-xl overflow-hidden h-[600px]">
       <Canvas shadows>
-        <PerspectiveCamera makeDefault position={[3, 3, 3]} fov={50} />
+        <PerspectiveCamera makeDefault position={[5, 5, 5]} fov={50} />
         <OrbitControls 
           enableDamping
           dampingFactor={0.05}

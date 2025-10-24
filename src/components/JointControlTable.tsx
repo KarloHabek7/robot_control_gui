@@ -28,7 +28,7 @@ const JointControlTable = () => {
   };
 
   return (
-    <div className="card-premium rounded-xl p-6">
+    <div className="card-premium rounded-xl p-6 h-full flex flex-col">
       <div className="flex items-center justify-between mb-6">
         <h3 className="text-sm font-semibold text-foreground uppercase tracking-wider">
           Joint Control
@@ -44,7 +44,7 @@ const JointControlTable = () => {
         </Button>
       </div>
 
-      <div className="space-y-4">
+      <div className="space-y-4 overflow-y-auto flex-1">
         {currentConfig.joints.map((joint) => (
           <div
             key={joint.id}
