@@ -2,8 +2,11 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Card } from "@/components/ui/card";
-import { Loader2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Loader2, LogOut, UserCog } from "lucide-react";
 import { toast } from "sonner";
+import { useAuth } from "@/hooks/useAuth";
+import { useUserRole } from "@/hooks/useUserRole";
 
 interface Robot {
   id: string;
@@ -19,6 +22,8 @@ export default function RobotDashboard() {
   const [robots, setRobots] = useState<Robot[]>([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  const { user, signOut } = useAuth();
+  const { role, isProfessor, loading: roleLoading } = useUserRole(user?.id);
 
   useEffect(() => {
     fetchRobots();
@@ -45,11 +50,16 @@ export default function RobotDashboard() {
     navigate(`/robot/${robotId}`);
   };
 
+  const handleLogout = async () => {
+    await signOut();
+    navigate('/auth');
+  };
+
   const formatDateTime = (timestamp: string) => {
     return new Date(timestamp).toLocaleString();
   };
 
-  if (loading) {
+  if (loading || roleLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-background via-background to-accent/20 flex items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
@@ -60,11 +70,38 @@ export default function RobotDashboard() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-accent/20 p-6">
       <div className="max-w-7xl mx-auto">
-        <header className="mb-8 text-center">
-          <h1 className="text-4xl font-bold mb-2 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-            Robot Laboratory Dashboard
-          </h1>
-          <p className="text-muted-foreground">
+        <header className="mb-8">
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <h1 className="text-4xl font-bold mb-2 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+                Robot Laboratory Dashboard
+              </h1>
+              <p className="text-muted-foreground">
+                {role ? `Welcome, ${role === 'professor' ? 'Professor' : 'Student'}` : 'Welcome'}
+              </p>
+            </div>
+            <div className="flex gap-2">
+              {isProfessor && (
+                <Button
+                  variant="outline"
+                  onClick={() => navigate('/admin')}
+                  className="gap-2"
+                >
+                  <UserCog className="h-4 w-4" />
+                  Admin Panel
+                </Button>
+              )}
+              <Button
+                variant="outline"
+                onClick={handleLogout}
+                className="gap-2"
+              >
+                <LogOut className="h-4 w-4" />
+                Logout
+              </Button>
+            </div>
+          </div>
+          <p className="text-muted-foreground text-center">
             Click on any robot to access its control interface
           </p>
         </header>
