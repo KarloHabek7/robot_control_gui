@@ -43,32 +43,35 @@ const Index = () => {
           />
         </div>
 
-        {/* Configuration and Position */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
-          <div className="lg:col-span-2">
-            <RobotConfiguration />
-          </div>
-          <div className="lg:col-span-1">
-            <PositionDisplay position={position} />
-          </div>
-        </div>
-
-        {/* Main content grid */}
+        {/* Top Section - 3D Viewer and Joint Controls */}
         <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 mb-6">
           {/* 3D Visualization */}
           <div>
             <Robot3DViewer />
           </div>
 
+          {/* Joint Control Table */}
+          <div>
+            <JointControlTable />
+          </div>
+        </div>
+
+        {/* Bottom Section - Configuration, Position, and Commands */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Position Display */}
+          <div>
+            <PositionDisplay position={position} />
+          </div>
+
+          {/* Robot Configuration */}
+          <div>
+            <RobotConfiguration />
+          </div>
+
           {/* Command Panel */}
           <div>
             <CommandPanel />
           </div>
-        </div>
-
-        {/* Joint Control Table - Full width */}
-        <div>
-          <JointControlTable />
         </div>
       </div>
     </div>
