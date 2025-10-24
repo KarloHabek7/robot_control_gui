@@ -80,37 +80,29 @@ export default function RobotControl() {
           </h1>
         </div>
 
-        {/* Connection and Control Status */}
-        <div className="mb-6">
-          <ConnectionStatus
-            connected={false}
-            onToggleConnection={() => {}}
-          />
-        </div>
-
-        {/* Control Panel */}
-        <div className="mb-6">
-          <ControlPanel
-            onMove={(direction, value) => console.log('Move:', direction, value)}
-            onGoToPosition={(x, y, z) => console.log('Go to:', x, y, z)}
-          />
-        </div>
-
-        {/* Top Section - 3D Viewer and Joint Controls */}
+        {/* Top Section - 3D Viewer and Joint Controls with equal heights */}
         <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 mb-6">
           {/* 3D Visualization */}
-          <div>
+          <div className="h-[600px]">
             <Robot3DViewer />
           </div>
 
           {/* Joint Control Table */}
-          <div>
+          <div className="h-[600px]">
             <JointControlTable />
           </div>
         </div>
 
-        {/* Bottom Section - Configuration, Position, and Commands */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Bottom Section - All Controls */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          {/* Connection Status */}
+          <div>
+            <ConnectionStatus
+              connected={false}
+              onToggleConnection={() => {}}
+            />
+          </div>
+
           {/* Position Display */}
           <div>
             <PositionDisplay position={position} />
@@ -125,6 +117,14 @@ export default function RobotControl() {
           <div>
             <CommandPanel />
           </div>
+        </div>
+
+        {/* Compact Control Panel */}
+        <div className="mt-4">
+          <ControlPanel
+            onMove={(direction, value) => console.log('Move:', direction, value)}
+            onGoToPosition={(x, y, z) => console.log('Go to:', x, y, z)}
+          />
         </div>
       </div>
     </div>
