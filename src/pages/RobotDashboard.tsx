@@ -1,10 +1,9 @@
-import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { supabase } from '@/integrations/supabase/client';
-import { Card } from '@/components/ui/card';
-import { Loader2 } from 'lucide-react';
-import { toast } from 'sonner';
-import { format } from 'date-fns';
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
+import { Card } from "@/components/ui/card";
+import { Loader2 } from "lucide-react";
+import { toast } from "sonner";
 
 interface Robot {
   id: string;
@@ -16,7 +15,7 @@ interface Robot {
   last_updated: string;
 }
 
-const RobotDashboard = () => {
+export default function RobotDashboard() {
   const [robots, setRobots] = useState<Robot[]>([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
@@ -28,15 +27,15 @@ const RobotDashboard = () => {
   const fetchRobots = async () => {
     try {
       const { data, error } = await supabase
-        .from('robots')
-        .select('*')
-        .order('name');
+        .from("robots")
+        .select("*")
+        .order("name");
 
       if (error) throw error;
       setRobots(data || []);
     } catch (error) {
-      console.error('Error fetching robots:', error);
-      toast.error('Failed to load robots');
+      console.error("Error fetching robots:", error);
+      toast.error("Failed to load robots");
     } finally {
       setLoading(false);
     }
@@ -46,42 +45,41 @@ const RobotDashboard = () => {
     navigate(`/robot/${robotId}`);
   };
 
+  const formatDateTime = (timestamp: string) => {
+    return new Date(timestamp).toLocaleString();
+  };
+
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-background via-background to-background flex items-center justify-center">
-        <Loader2 className="h-12 w-12 animate-spin text-primary" />
+      <div className="min-h-screen bg-gradient-to-br from-background via-background to-accent/20 flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-background relative overflow-hidden">
-      {/* Diagonal gradient overlay */}
-      <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-accent/5 pointer-events-none" />
-      
-      <div className="container mx-auto p-6 relative z-10 max-w-7xl">
-        {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-5xl font-bold text-foreground mb-3 tracking-tight">
-            Laboratory Robot Fleet
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-accent/20 p-6">
+      <div className="max-w-7xl mx-auto">
+        <header className="mb-8 text-center">
+          <h1 className="text-4xl font-bold mb-2 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+            Robot Laboratory Dashboard
           </h1>
-          <p className="text-muted-foreground text-lg">
-            Select a robot to view its control interface
+          <p className="text-muted-foreground">
+            Click on any robot to access its control interface
           </p>
-        </div>
+        </header>
 
-        {/* Robot Table Card */}
-        <Card className="overflow-hidden shadow-lg">
+        <Card className="overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
                 <tr className="border-b bg-muted/50">
-                  <th className="text-left p-4 font-semibold text-foreground">Robot Name</th>
-                  <th className="text-left p-4 font-semibold text-foreground">Date & Time</th>
-                  <th className="text-center p-4 font-semibold text-foreground">X</th>
-                  <th className="text-center p-4 font-semibold text-foreground">Y</th>
-                  <th className="text-center p-4 font-semibold text-foreground">Z</th>
-                  <th className="text-center p-4 font-semibold text-foreground">Gripper Status</th>
+                  <th className="px-6 py-4 text-left font-semibold">Robot Name</th>
+                  <th className="px-6 py-4 text-left font-semibold">Date & Time</th>
+                  <th className="px-6 py-4 text-left font-semibold">X</th>
+                  <th className="px-6 py-4 text-left font-semibold">Y</th>
+                  <th className="px-6 py-4 text-left font-semibold">Z</th>
+                  <th className="px-6 py-4 text-left font-semibold">Gripper Status</th>
                 </tr>
               </thead>
               <tbody>
@@ -89,30 +87,34 @@ const RobotDashboard = () => {
                   <tr
                     key={robot.id}
                     onClick={() => handleRobotClick(robot.id)}
-                    className={`
-                      border-b transition-all cursor-pointer hover:scale-[1.01] hover:shadow-md
-                      ${robot.gripper_open 
-                        ? 'bg-green-500/20 hover:bg-green-500/30 border-green-500/30' 
-                        : 'bg-red-500/20 hover:bg-red-500/30 border-red-500/30'
-                      }
-                    `}
+                    className={`border-b cursor-pointer transition-all hover:scale-[1.01] ${
+                      robot.gripper_open
+                        ? "bg-green-500/10 hover:bg-green-500/20"
+                        : "bg-red-500/10 hover:bg-red-500/20"
+                    }`}
                   >
-                    <td className="p-4 font-medium text-foreground">{robot.name}</td>
-                    <td className="p-4 text-muted-foreground font-mono text-sm">
-                      {format(new Date(robot.last_updated), 'MMM dd, yyyy HH:mm:ss')}
+                    <td className="px-6 py-4 font-medium">{robot.name}</td>
+                    <td className="px-6 py-4 text-sm text-muted-foreground">
+                      {formatDateTime(robot.last_updated)}
                     </td>
-                    <td className="p-4 text-center font-mono text-foreground">{robot.x_coordinate.toFixed(1)}</td>
-                    <td className="p-4 text-center font-mono text-foreground">{robot.y_coordinate.toFixed(1)}</td>
-                    <td className="p-4 text-center font-mono text-foreground">{robot.z_coordinate.toFixed(1)}</td>
-                    <td className="p-4 text-center">
-                      <span className={`
-                        inline-block px-3 py-1 rounded-full text-sm font-semibold
-                        ${robot.gripper_open 
-                          ? 'bg-green-600 text-white' 
-                          : 'bg-red-600 text-white'
-                        }
-                      `}>
-                        {robot.gripper_open ? 'Open' : 'Closed'}
+                    <td className="px-6 py-4 font-mono text-sm">
+                      {robot.x_coordinate.toFixed(2)}
+                    </td>
+                    <td className="px-6 py-4 font-mono text-sm">
+                      {robot.y_coordinate.toFixed(2)}
+                    </td>
+                    <td className="px-6 py-4 font-mono text-sm">
+                      {robot.z_coordinate.toFixed(2)}
+                    </td>
+                    <td className="px-6 py-4">
+                      <span
+                        className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${
+                          robot.gripper_open
+                            ? "bg-green-500 text-white"
+                            : "bg-red-500 text-white"
+                        }`}
+                      >
+                        {robot.gripper_open ? "Open" : "Closed"}
                       </span>
                     </td>
                   </tr>
@@ -122,20 +124,12 @@ const RobotDashboard = () => {
           </div>
         </Card>
 
-        {/* Legend */}
-        <div className="mt-6 flex justify-center gap-8">
-          <div className="flex items-center gap-2">
-            <div className="w-6 h-6 rounded bg-green-500/30 border-2 border-green-500"></div>
-            <span className="text-sm text-muted-foreground">Gripper Open</span>
+        {robots.length === 0 && (
+          <div className="text-center mt-8 text-muted-foreground">
+            No robots available in the laboratory
           </div>
-          <div className="flex items-center gap-2">
-            <div className="w-6 h-6 rounded bg-red-500/30 border-2 border-red-500"></div>
-            <span className="text-sm text-muted-foreground">Gripper Closed</span>
-          </div>
-        </div>
+        )}
       </div>
     </div>
   );
-};
-
-export default RobotDashboard;
+}

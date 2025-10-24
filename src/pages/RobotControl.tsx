@@ -1,99 +1,98 @@
-import { useParams, useNavigate } from 'react-router-dom';
-import { useEffect, useState } from 'react';
-import { toast } from 'sonner';
-import { supabase } from '@/integrations/supabase/client';
-import ConnectionStatus from '@/components/ConnectionStatus';
-import PositionDisplay from '@/components/PositionDisplay';
-import Robot3DViewer from '@/components/Robot3DViewer';
-import JointControlTable from '@/components/JointControlTable';
-import RobotConfiguration from '@/components/RobotConfiguration';
-import CommandPanel from '@/components/CommandPanel';
-import { useRobotStore } from '@/stores/robotStore';
-import { Button } from '@/components/ui/button';
-import { ArrowLeft, Loader2 } from 'lucide-react';
+import { useParams, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
+import { ArrowLeft, Loader2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import ConnectionStatus from "@/components/ConnectionStatus";
+import ControlPanel from "@/components/ControlPanel";
+import PositionDisplay from "@/components/PositionDisplay";
+import Robot3DViewer from "@/components/Robot3DViewer";
+import JointControlTable from "@/components/JointControlTable";
+import CommandPanel from "@/components/CommandPanel";
+import RobotConfiguration from "@/components/RobotConfiguration";
+import { useRobotStore } from "@/stores/robotStore";
 
-const RobotControl = () => {
+export default function RobotControl() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { position, isConnected, setConnectionStatus } = useRobotStore();
-  const [robotName, setRobotName] = useState<string>('');
   const [loading, setLoading] = useState(true);
+  const [robotName, setRobotName] = useState("");
+  const position = useRobotStore((state) => state.position);
 
   useEffect(() => {
     if (id) {
-      fetchRobotDetails();
+      fetchRobotDetails(id);
     }
   }, [id]);
 
-  const fetchRobotDetails = async () => {
+  const fetchRobotDetails = async (robotId: string) => {
     try {
       const { data, error } = await supabase
-        .from('robots')
-        .select('name')
-        .eq('id', id)
+        .from("robots")
+        .select("*")
+        .eq("id", robotId)
         .single();
 
       if (error) throw error;
+      
       if (data) {
         setRobotName(data.name);
+        // Update robot store position with database values
+        useRobotStore.getState().setPosition({
+          x: Number(data.x_coordinate),
+          y: Number(data.y_coordinate),
+          z: Number(data.z_coordinate),
+        });
       }
     } catch (error) {
-      console.error('Error fetching robot:', error);
-      toast.error('Failed to load robot details');
-      navigate('/');
+      console.error("Error fetching robot:", error);
+      toast.error("Failed to load robot details");
+      navigate("/");
     } finally {
       setLoading(false);
     }
   };
 
-  const handleToggleConnection = () => {
-    const newStatus = !isConnected;
-    setConnectionStatus(newStatus);
-    
-    if (newStatus) {
-      toast.success(`Connected to ${robotName} (demo mode)!`);
-    } else {
-      toast.info(`Disconnected from ${robotName}`);
-    }
-  };
-
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-background via-background to-background flex items-center justify-center">
-        <Loader2 className="h-12 w-12 animate-spin text-primary" />
+      <div className="min-h-screen bg-gradient-to-br from-background via-background to-accent/20 flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-background relative overflow-hidden">
-      {/* Diagonal gradient overlay */}
-      <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-accent/5 pointer-events-none" />
-      
-      <div className="container mx-auto p-6 relative z-10 max-w-[1800px]">
-        {/* Header */}
-        <div className="mb-8 flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <Button
-              variant="outline"
-              size="icon"
-              onClick={() => navigate('/')}
-              className="hover:scale-105 transition-transform"
-            >
-              <ArrowLeft className="h-5 w-5" />
-            </Button>
-            <div>
-              <h1 className="text-4xl font-bold text-foreground mb-2 tracking-tight">
-                {robotName} Control Interface
-              </h1>
-              <p className="text-muted-foreground text-sm">
-                Professional robot control and monitoring system
-              </p>
-            </div>
-          </div>
-          <ConnectionStatus 
-            connected={isConnected} 
-            onToggleConnection={handleToggleConnection} 
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-accent/20">
+      <div className="container mx-auto p-6">
+        <div className="mb-6 flex items-center gap-4">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => navigate("/")}
+            className="gap-2"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            Back to Dashboard
+          </Button>
+          <h1 className="text-3xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+            {robotName} - Control Interface
+          </h1>
+        </div>
+
+        {/* Connection and Control Status */}
+        <div className="mb-6">
+          <ConnectionStatus
+            connected={false}
+            onToggleConnection={() => {}}
+          />
+        </div>
+
+        {/* Control Panel */}
+        <div className="mb-6">
+          <ControlPanel
+            onMove={(direction, value) => console.log('Move:', direction, value)}
+            onGoToPosition={(x, y, z) => console.log('Go to:', x, y, z)}
           />
         </div>
 
@@ -130,6 +129,4 @@ const RobotControl = () => {
       </div>
     </div>
   );
-};
-
-export default RobotControl;
+}
