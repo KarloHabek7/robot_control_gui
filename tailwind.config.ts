@@ -50,6 +50,17 @@ export default {
           foreground: "hsl(var(--card-foreground))",
         },
       },
+      backgroundImage: {
+        'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
+        'gradient-primary': 'linear-gradient(135deg, hsl(280 85% 65% / 0.8), hsl(189 95% 55% / 0.6))',
+      },
+      backdropBlur: {
+        xs: '2px',
+      },
+      boxShadow: {
+        'glow': '0 0 20px -5px hsl(var(--glow-primary) / 0.5)',
+        'glow-lg': '0 0 40px -10px hsl(var(--glow-primary) / 0.6)',
+      },
       fontFamily: {
         mono: ['Monaco', 'Consolas', 'Courier New', 'monospace'],
       },

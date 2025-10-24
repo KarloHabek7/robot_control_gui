@@ -119,40 +119,45 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background p-6">
-      <div className="max-w-[1800px] mx-auto">
-        {/* Header */}
-        <div className="mb-6">
-          <h1 className="text-3xl font-bold glow-text mb-2">ROBOT CONTROL SYSTEM</h1>
-          <p className="text-muted-foreground">Real-time coordinate tracking and movement control</p>
-        </div>
-
-        {/* Connection Status */}
-        <div className="mb-6">
-          <ConnectionStatus connected={connected} onToggleConnection={handleToggleConnection} />
-        </div>
-
-        {/* Position Display */}
-        <div className="mb-6">
-          <PositionDisplay position={position} />
-        </div>
-
-        {/* Main Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Visualizer */}
-          <div className="lg:col-span-2">
-            <div className="bg-card border border-border rounded-lg p-6">
-              <h2 className="text-sm font-semibold text-muted-foreground mb-4">COORDINATE SPACE</h2>
-              <div className="aspect-[4/3] bg-background rounded-lg overflow-hidden">
-                <RobotVisualizer position={position} />
-              </div>
-            </div>
+    <div className="min-h-screen bg-background relative overflow-hidden">
+      {/* Gradient Background Overlay */}
+      <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-transparent pointer-events-none" />
+      
+      <div className="relative z-10 p-6">
+        <div className="max-w-[1800px] mx-auto">
+          {/* Header */}
+          <div className="mb-8">
+            <h1 className="text-4xl font-bold gradient-text mb-2">ROBOT CONTROL SYSTEM</h1>
+            <p className="text-muted-foreground text-sm">Real-time coordinate tracking and movement control</p>
           </div>
 
-          {/* Control Panel */}
-          <div className="space-y-6">
-            <ControlPanel onMove={handleMove} onGoToPosition={handleGoToPosition} />
-            <CommandLog commands={commands} />
+          {/* Connection Status */}
+          <div className="mb-6">
+            <ConnectionStatus connected={connected} onToggleConnection={handleToggleConnection} />
+          </div>
+
+          {/* Position Display */}
+          <div className="mb-6">
+            <PositionDisplay position={position} />
+          </div>
+
+          {/* Main Grid */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {/* Visualizer */}
+            <div className="lg:col-span-2">
+              <div className="card-premium rounded-xl p-6 shadow-lg">
+                <h2 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-4">Coordinate Space</h2>
+                <div className="aspect-[4/3] bg-background/50 rounded-xl overflow-hidden border border-border/30">
+                  <RobotVisualizer position={position} />
+                </div>
+              </div>
+            </div>
+
+            {/* Control Panel */}
+            <div className="space-y-6">
+              <ControlPanel onMove={handleMove} onGoToPosition={handleGoToPosition} />
+              <CommandLog commands={commands} />
+            </div>
           </div>
         </div>
       </div>

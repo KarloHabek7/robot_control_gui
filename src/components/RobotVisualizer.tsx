@@ -15,12 +15,12 @@ const RobotVisualizer = ({ position }: RobotVisualizerProps) => {
     if (!ctx) return;
 
     const drawScene = () => {
-      // Clear canvas
-      ctx.fillStyle = 'hsl(220, 20%, 8%)';
+      // Clear canvas with deep navy background
+      ctx.fillStyle = 'hsl(222, 47%, 11%)';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
       // Draw grid
-      ctx.strokeStyle = 'hsl(189, 50%, 25%, 0.3)';
+      ctx.strokeStyle = 'hsl(220, 40%, 20%, 0.2)';
       ctx.lineWidth = 1;
       
       const gridSize = 40;
@@ -43,8 +43,8 @@ const RobotVisualizer = ({ position }: RobotVisualizerProps) => {
         ctx.stroke();
       }
 
-      // Draw axes
-      ctx.strokeStyle = 'hsl(189, 95%, 55%, 0.5)';
+      // Draw axes with purple/cyan theme
+      ctx.strokeStyle = 'hsl(280, 85%, 65%, 0.4)';
       ctx.lineWidth = 2;
       
       // X axis
@@ -66,33 +66,33 @@ const RobotVisualizer = ({ position }: RobotVisualizerProps) => {
       const robotSize = 8 + Math.abs(position.z) * 0.5;
 
       // Robot shadow
-      ctx.fillStyle = 'hsl(189, 95%, 55%, 0.1)';
+      ctx.fillStyle = 'hsl(280, 85%, 65%, 0.1)';
       ctx.beginPath();
       ctx.arc(robotX, robotY + 10, robotSize + 5, 0, Math.PI * 2);
       ctx.fill();
 
-      // Robot body
+      // Robot body with purple gradient
       const gradient = ctx.createRadialGradient(robotX, robotY, 0, robotX, robotY, robotSize);
-      gradient.addColorStop(0, 'hsl(189, 95%, 65%)');
-      gradient.addColorStop(1, 'hsl(189, 95%, 45%)');
+      gradient.addColorStop(0, 'hsl(280, 85%, 75%)');
+      gradient.addColorStop(1, 'hsl(280, 85%, 55%)');
       
       ctx.fillStyle = gradient;
       ctx.beginPath();
       ctx.arc(robotX, robotY, robotSize, 0, Math.PI * 2);
       ctx.fill();
 
-      // Robot glow
-      ctx.strokeStyle = 'hsl(189, 95%, 55%)';
+      // Robot glow with purple
+      ctx.strokeStyle = 'hsl(280, 85%, 65%)';
       ctx.lineWidth = 3;
-      ctx.shadowBlur = 20;
-      ctx.shadowColor = 'hsl(189, 95%, 55%)';
+      ctx.shadowBlur = 25;
+      ctx.shadowColor = 'hsl(280, 85%, 65%)';
       ctx.beginPath();
       ctx.arc(robotX, robotY, robotSize, 0, Math.PI * 2);
       ctx.stroke();
       ctx.shadowBlur = 0;
 
       // Draw position lines
-      ctx.strokeStyle = 'hsl(189, 95%, 55%, 0.3)';
+      ctx.strokeStyle = 'hsl(280, 85%, 65%, 0.3)';
       ctx.lineWidth = 1;
       ctx.setLineDash([5, 5]);
       

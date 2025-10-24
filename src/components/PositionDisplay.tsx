@@ -3,24 +3,33 @@ interface PositionDisplayProps {
 }
 
 const PositionDisplay = ({ position }: PositionDisplayProps) => {
-  const formatCoord = (value: number) => value.toFixed(2).padStart(7, ' ');
+  const formatCoord = (value: number) => value.toFixed(2);
 
   return (
     <div className="grid grid-cols-3 gap-4">
-      <div className="bg-card border border-border rounded-lg p-4">
-        <div className="text-muted-foreground text-xs mb-1">X AXIS</div>
-        <div className="text-2xl font-bold glow-text">{formatCoord(position.x)}</div>
-        <div className="text-xs text-muted-foreground mt-1">meters</div>
+      <div className="card-premium rounded-xl p-5 shadow-lg hover:shadow-glow transition-all duration-300">
+        <div className="flex items-center justify-between mb-3">
+          <div className="text-muted-foreground text-xs uppercase tracking-wider font-semibold">X Axis</div>
+          <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+        </div>
+        <div className="text-3xl font-bold text-foreground mb-1">{formatCoord(position.x)}</div>
+        <div className="text-xs text-muted-foreground">meters</div>
       </div>
-      <div className="bg-card border border-border rounded-lg p-4">
-        <div className="text-muted-foreground text-xs mb-1">Y AXIS</div>
-        <div className="text-2xl font-bold glow-text">{formatCoord(position.y)}</div>
-        <div className="text-xs text-muted-foreground mt-1">meters</div>
+      <div className="card-premium rounded-xl p-5 shadow-lg hover:shadow-glow transition-all duration-300">
+        <div className="flex items-center justify-between mb-3">
+          <div className="text-muted-foreground text-xs uppercase tracking-wider font-semibold">Y Axis</div>
+          <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+        </div>
+        <div className="text-3xl font-bold text-foreground mb-1">{formatCoord(position.y)}</div>
+        <div className="text-xs text-muted-foreground">meters</div>
       </div>
-      <div className="bg-card border border-border rounded-lg p-4">
-        <div className="text-muted-foreground text-xs mb-1">Z AXIS</div>
-        <div className="text-2xl font-bold glow-text">{formatCoord(position.z)}</div>
-        <div className="text-xs text-muted-foreground mt-1">meters</div>
+      <div className="card-premium rounded-xl p-5 shadow-lg hover:shadow-glow transition-all duration-300">
+        <div className="flex items-center justify-between mb-3">
+          <div className="text-muted-foreground text-xs uppercase tracking-wider font-semibold">Z Axis</div>
+          <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+        </div>
+        <div className="text-3xl font-bold text-foreground mb-1">{formatCoord(position.z)}</div>
+        <div className="text-xs text-muted-foreground">meters</div>
       </div>
     </div>
   );
