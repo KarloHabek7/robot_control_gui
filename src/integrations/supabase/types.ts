@@ -14,33 +14,160 @@ export type Database = {
   }
   public: {
     Tables: {
+      robot_images: {
+        Row: {
+          caption: string | null
+          created_at: string | null
+          display_order: number | null
+          id: string
+          image_type: Database["public"]["Enums"]["robot_image_type"]
+          image_url: string
+          robot_id: string
+        }
+        Insert: {
+          caption?: string | null
+          created_at?: string | null
+          display_order?: number | null
+          id?: string
+          image_type?: Database["public"]["Enums"]["robot_image_type"]
+          image_url: string
+          robot_id: string
+        }
+        Update: {
+          caption?: string | null
+          created_at?: string | null
+          display_order?: number | null
+          id?: string
+          image_type?: Database["public"]["Enums"]["robot_image_type"]
+          image_url?: string
+          robot_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "robot_images_robot_id_fkey"
+            columns: ["robot_id"]
+            isOneToOne: false
+            referencedRelation: "robots"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      robot_specifications: {
+        Row: {
+          created_at: string | null
+          id: string
+          mounting_options: string[] | null
+          operating_temperature_range: string | null
+          power_consumption: number | null
+          protection_rating: string | null
+          robot_id: string
+          speed_data: Json | null
+          updated_at: string | null
+          working_envelope_data: Json | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          mounting_options?: string[] | null
+          operating_temperature_range?: string | null
+          power_consumption?: number | null
+          protection_rating?: string | null
+          robot_id: string
+          speed_data?: Json | null
+          updated_at?: string | null
+          working_envelope_data?: Json | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          mounting_options?: string[] | null
+          operating_temperature_range?: string | null
+          power_consumption?: number | null
+          protection_rating?: string | null
+          robot_id?: string
+          speed_data?: Json | null
+          updated_at?: string | null
+          working_envelope_data?: Json | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "robot_specifications_robot_id_fkey"
+            columns: ["robot_id"]
+            isOneToOne: true
+            referencedRelation: "robots"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       robots: {
         Row: {
+          arm_weight_kg: number | null
           created_at: string
+          datasheet_url: string | null
+          description: string | null
           gripper_open: boolean
           id: string
+          image_url: string | null
+          is_active: boolean | null
           last_updated: string
+          manufacturer: string | null
+          model: string | null
           name: string
+          number_of_axes: number | null
+          owner_id: string | null
+          payload_kg: number | null
+          reach_mm: number | null
+          repeatability_mm: number | null
+          specifications: Json | null
+          urdf_data: Json | null
           x_coordinate: number
           y_coordinate: number
           z_coordinate: number
         }
         Insert: {
+          arm_weight_kg?: number | null
           created_at?: string
+          datasheet_url?: string | null
+          description?: string | null
           gripper_open?: boolean
           id?: string
+          image_url?: string | null
+          is_active?: boolean | null
           last_updated?: string
+          manufacturer?: string | null
+          model?: string | null
           name: string
+          number_of_axes?: number | null
+          owner_id?: string | null
+          payload_kg?: number | null
+          reach_mm?: number | null
+          repeatability_mm?: number | null
+          specifications?: Json | null
+          urdf_data?: Json | null
           x_coordinate?: number
           y_coordinate?: number
           z_coordinate?: number
         }
         Update: {
+          arm_weight_kg?: number | null
           created_at?: string
+          datasheet_url?: string | null
+          description?: string | null
           gripper_open?: boolean
           id?: string
+          image_url?: string | null
+          is_active?: boolean | null
           last_updated?: string
+          manufacturer?: string | null
+          model?: string | null
           name?: string
+          number_of_axes?: number | null
+          owner_id?: string | null
+          payload_kg?: number | null
+          reach_mm?: number | null
+          repeatability_mm?: number | null
+          specifications?: Json | null
+          urdf_data?: Json | null
           x_coordinate?: number
           y_coordinate?: number
           z_coordinate?: number
@@ -55,7 +182,12 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      robot_image_type:
+        | "primary"
+        | "datasheet"
+        | "working_envelope"
+        | "dimensional"
+        | "other"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -182,6 +314,14 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      robot_image_type: [
+        "primary",
+        "datasheet",
+        "working_envelope",
+        "dimensional",
+        "other",
+      ],
+    },
   },
 } as const
