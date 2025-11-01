@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Loader2, LogOut, UserCog } from "lucide-react";
+import { Loader2, LogOut, UserCog, BookOpen } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@/hooks/useAuth";
 import { useUserRole } from "@/hooks/useUserRole";
@@ -81,6 +81,14 @@ export default function RobotDashboard() {
               </p>
             </div>
             <div className="flex gap-2">
+              <Button
+                variant="outline"
+                onClick={() => navigate('/catalog')}
+                className="gap-2"
+              >
+                <BookOpen className="h-4 w-4" />
+                View Catalog
+              </Button>
               {isProfessor && (
                 <Button
                   variant="outline"

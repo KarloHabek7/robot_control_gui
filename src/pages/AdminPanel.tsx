@@ -4,10 +4,12 @@ import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Loader2, ArrowLeft, UserPlus, Shield } from 'lucide-react';
 import { toast } from 'sonner';
 import { useAuth } from '@/hooks/useAuth';
 import { useUserRole } from '@/hooks/useUserRole';
+import RobotManagement from '@/components/RobotManagement';
 
 interface User {
   id: string;
@@ -232,114 +234,127 @@ export default function AdminPanel() {
           </h1>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* User Roles Management */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Shield className="h-5 w-5" />
-                User Roles
-              </CardTitle>
-              <CardDescription>
-                Assign roles to users (Professor or Student)
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {users.map((u) => (
-                  <div key={u.id} className="flex items-center justify-between p-3 border rounded-lg">
-                    <div>
-                      <div className="font-medium">{u.display_name || u.full_name || 'Unknown'}</div>
-                      <div className="text-sm text-muted-foreground">{u.email}</div>
-                    </div>
-                    <Select
-                      value={u.role || 'none'}
-                      onValueChange={(value) => {
-                        if (value !== 'none') {
-                          handleRoleChange(u.id, value as 'professor' | 'student');
-                        }
-                      }}
-                    >
-                      <SelectTrigger className="w-32">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="none">No Role</SelectItem>
-                        <SelectItem value="professor">Professor</SelectItem>
-                        <SelectItem value="student">Student</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
+        <Tabs defaultValue="users" className="space-y-6">
+          <TabsList>
+            <TabsTrigger value="users">User Management</TabsTrigger>
+            <TabsTrigger value="robots">Robot Management</TabsTrigger>
+          </TabsList>
 
-          {/* Robot Access Management */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <UserPlus className="h-5 w-5" />
-                Robot Access
-              </CardTitle>
-              <CardDescription>
-                Grant students access to specific robots
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {/* Grant Access Form */}
-                <div className="p-4 border rounded-lg bg-muted/50">
-                  <h4 className="font-medium mb-3">Grant New Access</h4>
-                  <div className="space-y-2">
-                    <Select onValueChange={(robotId) => {
-                      const selectedUserId = users.find(u => u.role === 'student')?. id;
-                      if (selectedUserId && robotId) {
-                        handleGrantAccess(robotId, selectedUserId);
-                      }
-                    }}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select Robot & Student" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {robots.map((robot) => (
-                          <SelectItem key={robot.id} value={robot.id}>
-                            {robot.name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-
-                {/* Current Access List */}
-                <div className="space-y-2">
-                  <h4 className="font-medium">Current Access</h4>
-                  {robotAccess.map((access) => (
-                    <div key={access.id} className="flex items-center justify-between p-3 border rounded-lg">
-                      <div>
-                        <div className="font-medium">{access.robot_name}</div>
-                        <div className="text-sm text-muted-foreground">{access.user_email}</div>
+          <TabsContent value="users">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {/* User Roles Management */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Shield className="h-5 w-5" />
+                    User Roles
+                  </CardTitle>
+                  <CardDescription>
+                    Assign roles to users (Professor or Student)
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    {users.map((u) => (
+                      <div key={u.id} className="flex items-center justify-between p-3 border rounded-lg">
+                        <div>
+                          <div className="font-medium">{u.display_name || u.full_name || 'Unknown'}</div>
+                          <div className="text-sm text-muted-foreground">{u.email}</div>
+                        </div>
+                        <Select
+                          value={u.role || 'none'}
+                          onValueChange={(value) => {
+                            if (value !== 'none') {
+                              handleRoleChange(u.id, value as 'professor' | 'student');
+                            }
+                          }}
+                        >
+                          <SelectTrigger className="w-32">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="none">No Role</SelectItem>
+                            <SelectItem value="professor">Professor</SelectItem>
+                            <SelectItem value="student">Student</SelectItem>
+                          </SelectContent>
+                        </Select>
                       </div>
-                      <Button
-                        variant="destructive"
-                        size="sm"
-                        onClick={() => handleRevokeAccess(access.id)}
-                      >
-                        Revoke
-                      </Button>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Robot Access Management */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <UserPlus className="h-5 w-5" />
+                    Robot Access
+                  </CardTitle>
+                  <CardDescription>
+                    Grant students access to specific robots
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    {/* Grant Access Form */}
+                    <div className="p-4 border rounded-lg bg-muted/50">
+                      <h4 className="font-medium mb-3">Grant New Access</h4>
+                      <div className="space-y-2">
+                        <Select onValueChange={(robotId) => {
+                          const selectedUserId = users.find(u => u.role === 'student')?.id;
+                          if (selectedUserId && robotId) {
+                            handleGrantAccess(robotId, selectedUserId);
+                          }
+                        }}>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select Robot & Student" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {robots.map((robot) => (
+                              <SelectItem key={robot.id} value={robot.id}>
+                                {robot.name}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
                     </div>
-                  ))}
-                  {robotAccess.length === 0 && (
-                    <div className="text-center text-muted-foreground py-4">
-                      No robot access granted yet
+
+                    {/* Current Access List */}
+                    <div className="space-y-2">
+                      <h4 className="font-medium">Current Access</h4>
+                      {robotAccess.map((access) => (
+                        <div key={access.id} className="flex items-center justify-between p-3 border rounded-lg">
+                          <div>
+                            <div className="font-medium">{access.robot_name}</div>
+                            <div className="text-sm text-muted-foreground">{access.user_email}</div>
+                          </div>
+                          <Button
+                            variant="destructive"
+                            size="sm"
+                            onClick={() => handleRevokeAccess(access.id)}
+                          >
+                            Revoke
+                          </Button>
+                        </div>
+                      ))}
+                      {robotAccess.length === 0 && (
+                        <div className="text-center text-muted-foreground py-4">
+                          No robot access granted yet
+                        </div>
+                      )}
                     </div>
-                  )}
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </TabsContent>
+
+          <TabsContent value="robots">
+            <RobotManagement />
+          </TabsContent>
+        </Tabs>
       </div>
     </div>
   );
