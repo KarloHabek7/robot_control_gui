@@ -152,10 +152,10 @@ export default function RobotControl() {
           </div>
         </div>
 
-        {/* Bottom Section - 4 Column Layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-          {/* Column 1: Robot Configuration + Connection Status */}
-          <div className="space-y-4">
+        {/* Bottom Section - Flexible Layout */}
+        <div className="grid grid-cols-1 xl:grid-cols-12 gap-6">
+          {/* Left Column: Robot Configuration + Connection Status */}
+          <div className="xl:col-span-3 space-y-4">
             <RobotConfiguration />
             <ConnectionStatus
               connected={isConnected}
@@ -163,8 +163,8 @@ export default function RobotControl() {
             />
           </div>
 
-          {/* Column 2: Position Display + TCP Controls */}
-          <div className="space-y-4">
+          {/* Middle Section: Position Display + TCP Controls */}
+          <div className="xl:col-span-5 space-y-4">
             <PositionDisplay position={position} />
             <ControlPanel
               onMove={handleMove}
@@ -172,15 +172,10 @@ export default function RobotControl() {
             />
           </div>
 
-          {/* Column 3: Program Control + Command Interface */}
-          <div className="space-y-4">
+          {/* Right Column: Program Control + Command Interface */}
+          <div className="xl:col-span-4 space-y-4">
             <ProgramControl />
             <CommandPanel />
-          </div>
-
-          {/* Column 4: Additional Controls (future use) */}
-          <div className="space-y-4">
-            {/* Reserved for future components */}
           </div>
         </div>
       </div>
