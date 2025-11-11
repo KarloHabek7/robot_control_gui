@@ -5,13 +5,26 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Upload, Plus, Settings } from 'lucide-react';
+import { Upload, Plus, Settings, Wifi } from 'lucide-react';
 import { toast } from 'sonner';
+import { urRobotService } from '@/services/urRobotService';
 
 const RobotConfiguration = () => {
-  const { currentConfig, availableConfigs, setCurrentConfig, addConfig } = useRobotStore();
+  const { 
+    currentConfig, 
+    availableConfigs, 
+    setCurrentConfig, 
+    addConfig,
+    robotIP,
+    robotPort,
+    setRobotIP,
+    setRobotPort,
+  } = useRobotStore();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
+  const [localIP, setLocalIP] = useState(robotIP);
+  const [localPort, setLocalPort] = useState(robotPort.toString());
+  const [isTestingConnection, setIsTestingConnection] = useState(false);
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -57,6 +70,20 @@ const RobotConfiguration = () => {
         }
       };
       reader.readAsText(file);
+    }
+  };
+
+  const handleTestConnection = async () => {
+    setIsTestingConnection(true);
+    try {
+      await urRobotService.connect(localIP, parseInt(localPort));
+      setRobotIP(localIP);
+      setRobotPort(parseInt(localPort));
+      toast.success('Connection successful!');
+    } catch (error) {
+      toast.error('Connection failed. Check IP and port.');
+    } finally {
+      setIsTestingConnection(false);
     }
   };
 
@@ -159,6 +186,48 @@ const RobotConfiguration = () => {
             </div>
           </div>
         )}
+
+        {/* Robot Network Configuration */}
+        <div className="mt-4 pt-4 border-t border-border">
+          <div className="flex items-center gap-2 mb-3">
+            <Wifi className="w-4 h-4 text-primary" />
+            <Label className="text-xs text-muted-foreground font-semibold">Robot Connection</Label>
+          </div>
+          
+          <div className="space-y-3">
+            <div>
+              <Label className="text-xs text-muted-foreground">Robot IP Address</Label>
+              <Input
+                type="text"
+                value={localIP}
+                onChange={(e) => setLocalIP(e.target.value)}
+                placeholder="192.168.1.100"
+                className="mt-1 bg-background border-border h-8 text-sm"
+              />
+            </div>
+            
+            <div>
+              <Label className="text-xs text-muted-foreground">Robot Port</Label>
+              <Input
+                type="number"
+                value={localPort}
+                onChange={(e) => setLocalPort(e.target.value)}
+                placeholder="30002"
+                className="mt-1 bg-background border-border h-8 text-sm"
+              />
+            </div>
+
+            <Button
+              onClick={handleTestConnection}
+              disabled={isTestingConnection}
+              size="sm"
+              variant="outline"
+              className="w-full"
+            >
+              {isTestingConnection ? 'Testing...' : 'Test Connection'}
+            </Button>
+          </div>
+        </div>
       </div>
     </div>
   );

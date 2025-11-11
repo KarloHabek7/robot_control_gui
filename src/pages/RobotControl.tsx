@@ -11,14 +11,16 @@ import Robot3DViewer from "@/components/Robot3DViewer";
 import JointControlTable from "@/components/JointControlTable";
 import CommandPanel from "@/components/CommandPanel";
 import RobotConfiguration from "@/components/RobotConfiguration";
+import ProgramControl from "@/components/ProgramControl";
 import { useRobotStore } from "@/stores/robotStore";
+import { urRobotService } from "@/services/urRobotService";
 
 export default function RobotControl() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [robotName, setRobotName] = useState("");
-  const position = useRobotStore((state) => state.position);
+  const { position, isConnected, setConnectionStatus, robotIP, robotPort } = useRobotStore();
 
   useEffect(() => {
     if (id) {
@@ -51,6 +53,63 @@ export default function RobotControl() {
       navigate("/");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleToggleConnection = async () => {
+    if (isConnected) {
+      setConnectionStatus(false);
+      toast.success('Disconnected from robot');
+    } else {
+      try {
+        await urRobotService.connect(robotIP, robotPort);
+        setConnectionStatus(true);
+        toast.success('Connected to robot');
+      } catch (error) {
+        toast.error('Failed to connect to robot');
+      }
+    }
+  };
+
+  const handleMove = async (direction: string, value?: number) => {
+    if (direction === 'stop') {
+      try {
+        await urRobotService.emergencyStop();
+        toast.success('Emergency stop activated');
+      } catch (error) {
+        toast.error('Failed to stop robot');
+      }
+      return;
+    }
+
+    const axisMap: { [key: string]: 'x' | 'y' | 'z' } = {
+      'up': 'y',
+      'down': 'y',
+      'left': 'x',
+      'right': 'x',
+      'z-up': 'z',
+      'z-down': 'z',
+    };
+
+    const directionMap: { [key: string]: '+' | '-' } = {
+      'up': '+',
+      'down': '-',
+      'left': '-',
+      'right': '+',
+      'z-up': '+',
+      'z-down': '-',
+    };
+
+    const axis = axisMap[direction];
+    const dir = directionMap[direction];
+
+    if (axis && dir && value) {
+      try {
+        await urRobotService.translateTCP({ axis, value, direction: dir });
+        toast.success(`Moved ${direction}`);
+      } catch (error) {
+        toast.error('Failed to move robot');
+      }
     }
   };
 
@@ -93,29 +152,35 @@ export default function RobotControl() {
           </div>
         </div>
 
-        {/* Bottom Section - 3 Column Layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Bottom Section - 4 Column Layout */}
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
           {/* Column 1: Robot Configuration + Connection Status */}
           <div className="space-y-4">
             <RobotConfiguration />
             <ConnectionStatus
-              connected={false}
-              onToggleConnection={() => {}}
+              connected={isConnected}
+              onToggleConnection={handleToggleConnection}
             />
           </div>
 
-          {/* Column 2: Position Display + Control Panel */}
+          {/* Column 2: Position Display + TCP Controls */}
           <div className="space-y-4">
             <PositionDisplay position={position} />
             <ControlPanel
-              onMove={(direction, value) => console.log('Move:', direction, value)}
+              onMove={handleMove}
               onGoToPosition={(x, y, z) => console.log('Go to:', x, y, z)}
             />
           </div>
 
-          {/* Column 3: Command Interface */}
-          <div>
+          {/* Column 3: Program Control + Command Interface */}
+          <div className="space-y-4">
+            <ProgramControl />
             <CommandPanel />
+          </div>
+
+          {/* Column 4: Additional Controls (future use) */}
+          <div className="space-y-4">
+            {/* Reserved for future components */}
           </div>
         </div>
       </div>

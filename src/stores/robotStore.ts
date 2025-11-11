@@ -32,6 +32,14 @@ interface RobotState {
   isConnected: boolean;
   connectionUrl: string;
   
+  // Robot network configuration
+  robotIP: string;
+  robotPort: number;
+  
+  // Program control
+  isProgramRunning: boolean;
+  currentProgramName: string;
+  
   // Position (end effector)
   position: { x: number; y: number; z: number };
   
@@ -43,6 +51,10 @@ interface RobotState {
   setPosition: (position: { x: number; y: number; z: number }) => void;
   setConnectionStatus: (status: boolean) => void;
   setConnectionUrl: (url: string) => void;
+  setRobotIP: (ip: string) => void;
+  setRobotPort: (port: number) => void;
+  setProgramRunning: (running: boolean) => void;
+  setCurrentProgramName: (name: string) => void;
   resetJoints: () => void;
 }
 
@@ -68,6 +80,10 @@ export const useRobotStore = create<RobotState>((set) => ({
   availableConfigs: [defaultConfig],
   isConnected: false,
   connectionUrl: 'ws://localhost:8080',
+  robotIP: '192.168.1.100',
+  robotPort: 30002,
+  isProgramRunning: false,
+  currentProgramName: '',
   position: { x: 0, y: 0, z: 0 },
   
   setCurrentConfig: (config) => set({ currentConfig: config }),
@@ -107,6 +123,14 @@ export const useRobotStore = create<RobotState>((set) => ({
   setConnectionStatus: (status) => set({ isConnected: status }),
   
   setConnectionUrl: (url) => set({ connectionUrl: url }),
+  
+  setRobotIP: (ip) => set({ robotIP: ip }),
+  
+  setRobotPort: (port) => set({ robotPort: port }),
+  
+  setProgramRunning: (running) => set({ isProgramRunning: running }),
+  
+  setCurrentProgramName: (name) => set({ currentProgramName: name }),
   
   resetJoints: () => set((state) => {
     if (!state.currentConfig) return state;

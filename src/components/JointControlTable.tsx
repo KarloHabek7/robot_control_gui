@@ -4,9 +4,21 @@ import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
 import { Switch } from '@/components/ui/switch';
 import { ChevronUp, ChevronDown, RotateCcw } from 'lucide-react';
+import { urRobotService } from '@/services/urRobotService';
+import { toast } from 'sonner';
 
 const JointControlTable = () => {
   const { currentConfig, updateJoint, setJointAngle, resetJoints } = useRobotStore();
+
+  // Step values for each joint (in radians, as per PDF specification)
+  const jointStepValues: { [key: number]: number } = {
+    1: 0.01, // Z1
+    2: 0.02, // Z2
+    3: 0.03, // Z3
+    4: 0.04, // Z4
+    5: 0.05, // Z5
+    6: 0.06, // Z6
+  };
 
   if (!currentConfig) {
     return (
@@ -16,15 +28,32 @@ const JointControlTable = () => {
     );
   }
 
-  const handleJog = (jointId: number, delta: number) => {
+  const handleJog = async (jointId: number, direction: '+' | '-') => {
     const joint = currentConfig.joints.find(j => j.id === jointId);
     if (!joint) return;
     
+    const stepValue = jointStepValues[jointId] || 0.01;
+    const delta = direction === '+' ? stepValue : -stepValue;
+    
+    // Convert radians to degrees for display
+    const deltaDegrees = (delta * 180) / Math.PI;
+    
     const newAngle = Math.max(
       joint.minLimit,
-      Math.min(joint.maxLimit, joint.angle + delta)
+      Math.min(joint.maxLimit, joint.angle + deltaDegrees)
     );
     setJointAngle(jointId, newAngle);
+
+    // Send to robot backend
+    try {
+      await urRobotService.moveJoint({
+        joint: jointId,
+        value: stepValue,
+        direction,
+      });
+    } catch (error) {
+      toast.error(`Failed to move joint ${jointId}`);
+    }
   };
 
   return (
@@ -52,7 +81,7 @@ const JointControlTable = () => {
           >
             {/* Joint Name & ID */}
             <div className="col-span-2">
-              <div className="text-xs text-muted-foreground">J{joint.id}</div>
+              <div className="text-xs text-muted-foreground">Z{joint.id} (Step: {jointStepValues[joint.id]}rad)</div>
               <div className="text-sm font-semibold text-foreground">{joint.name}</div>
             </div>
 
@@ -62,7 +91,7 @@ const JointControlTable = () => {
                 variant="outline"
                 size="icon"
                 className="h-8 w-8"
-                onClick={() => handleJog(joint.id, -1)}
+                onClick={() => handleJog(joint.id, '-')}
                 disabled={!joint.enabled}
               >
                 <ChevronDown className="w-4 h-4" />
@@ -71,7 +100,7 @@ const JointControlTable = () => {
                 variant="outline"
                 size="icon"
                 className="h-8 w-8"
-                onClick={() => handleJog(joint.id, 1)}
+                onClick={() => handleJog(joint.id, '+')}
                 disabled={!joint.enabled}
               >
                 <ChevronUp className="w-4 h-4" />

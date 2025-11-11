@@ -1,7 +1,9 @@
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { ArrowUp, ArrowDown, ArrowLeft, ArrowRight, MoveUp, MoveDown } from 'lucide-react';
+import { ArrowUp, ArrowDown, ArrowLeft, ArrowRight, MoveUp, MoveDown, RotateCw } from 'lucide-react';
 import { useState } from 'react';
+import { urRobotService } from '@/services/urRobotService';
+import { toast } from 'sonner';
 
 interface ControlPanelProps {
   onMove: (direction: string, value?: number) => void;
@@ -13,9 +15,23 @@ const ControlPanel = ({ onMove, onGoToPosition }: ControlPanelProps) => {
   const [targetY, setTargetY] = useState('0');
   const [targetZ, setTargetZ] = useState('0');
   const [stepSize, setStepSize] = useState('0.01');
+  const [rotationStep, setRotationStep] = useState('0.05');
 
   const handleGoTo = () => {
     onGoToPosition(parseFloat(targetX), parseFloat(targetY), parseFloat(targetZ));
+  };
+
+  const handleRotation = async (axis: 'rx' | 'ry' | 'rz', direction: '+' | '-') => {
+    try {
+      await urRobotService.rotateTCP({
+        axis,
+        value: parseFloat(rotationStep),
+        direction,
+      });
+      toast.success(`TCP rotated ${direction}${axis.toUpperCase()}`);
+    } catch (error) {
+      toast.error('Failed to rotate TCP');
+    }
   };
 
   return (
@@ -96,6 +112,73 @@ const ControlPanel = ({ onMove, onGoToPosition }: ControlPanelProps) => {
           >
             <MoveDown className="h-4 w-4 mr-2" />
             Z-
+          </Button>
+        </div>
+      </div>
+
+      {/* TCP Rotation Controls */}
+      <div className="card-premium rounded-xl p-4 shadow-lg">
+        <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">TCP Rotation</h3>
+        
+        <div className="flex items-center justify-center mb-3">
+          <Input
+            type="number"
+            value={rotationStep}
+            onChange={(e) => setRotationStep(e.target.value)}
+            className="w-16 text-center bg-background border-border text-sm h-8"
+            placeholder="0.05"
+          />
+          <span className="text-xs text-muted-foreground ml-2">radians per step</span>
+        </div>
+
+        <div className="grid grid-cols-2 gap-2">
+          <Button
+            onClick={() => handleRotation('rx', '+')}
+            size="sm"
+            className="bg-secondary hover:bg-primary/20 hover:border-primary/50 border border-border transition-all"
+          >
+            <RotateCw className="h-4 w-4 mr-2" />
+            +RX
+          </Button>
+          <Button
+            onClick={() => handleRotation('rx', '-')}
+            size="sm"
+            className="bg-secondary hover:bg-primary/20 hover:border-primary/50 border border-border transition-all"
+          >
+            <RotateCw className="h-4 w-4 mr-2 scale-x-[-1]" />
+            -RX
+          </Button>
+          <Button
+            onClick={() => handleRotation('ry', '+')}
+            size="sm"
+            className="bg-secondary hover:bg-primary/20 hover:border-primary/50 border border-border transition-all"
+          >
+            <RotateCw className="h-4 w-4 mr-2" />
+            +RY
+          </Button>
+          <Button
+            onClick={() => handleRotation('ry', '-')}
+            size="sm"
+            className="bg-secondary hover:bg-primary/20 hover:border-primary/50 border border-border transition-all"
+          >
+            <RotateCw className="h-4 w-4 mr-2 scale-x-[-1]" />
+            -RY
+          </Button>
+          <Button
+            onClick={() => handleRotation('rz', '+')}
+            size="sm"
+            className="bg-secondary hover:bg-primary/20 hover:border-primary/50 border border-border transition-all"
+          >
+            <RotateCw className="h-4 w-4 mr-2" />
+            +RZ
+          </Button>
+          <Button
+            onClick={() => handleRotation('rz', '-')}
+            size="sm"
+            className="bg-secondary hover:bg-primary/20 hover:border-primary/50 border border-border transition-all"
+          >
+            <RotateCw className="h-4 w-4 mr-2 scale-x-[-1]" />
+            -RZ
           </Button>
         </div>
       </div>
